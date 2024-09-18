@@ -1,4 +1,37 @@
 # Java
+<!-- sex -->
+<div>
+  <label for="search">Sex:</label>
+  <select name="cboSex">
+    <option value="0" ${cboSex == null || cboSex == '0' ? 'selected' : ''}></option>
+    <option value="M" ${cboSex == 'M' ? 'selected' : ''}>Male</option>
+    <option value="F" ${cboSex == 'F' ? 'selected' : ''}>Female</option>
+  </select>
+</div>
+        request.setAttribute("customerList", customerList);
+        request.setAttribute("txtCustomerName", customerName); // Giữ lại giá trị txtCustomerName
+        request.setAttribute("cboSex", sex); // Giữ lại giá trị cboSex
+        
+        // Chuyển tiếp đến trang JSP
+        request.getRequestDispatcher("/WEB-INF/jsp/search.jsp").forward(request, respon
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Java@WebServlet("/searchServlet")
 public class SearchServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
