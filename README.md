@@ -14,6 +14,16 @@
         
 
         request.getRequestDispatcher("/WEB-INF/jsp/search.jsp").forward(request, respon
+  ``` <!-- sex -->
+<div>
+  <label for="search">Sex:</label>
+  <select name="cboSex">
+    <option value="0" ${cboSex == null || cboSex == '0' ? 'selected' : ''}></option>
+    <option value="M" ${cboSex == 'M' ? 'selected' : ''}>Male</option>
+    <option value="F" ${cboSex == 'F' ? 'selected' : ''}>Female</option>
+  </select>
+</div>
+```
 
 
 
