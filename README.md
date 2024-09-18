@@ -6,8 +6,8 @@
   //  <option value="0" ${cboSex == null || cboSex == '0' ? 'selected' : ''}></option>
 //    <option value="M" ${cboSex == 'M' ? 'selected' : ''}>Male</option>
    // <option value="F" ${cboSex == 'F' ? 'selected' : ''}>Female</option>
-  </select>
-</div>
+//  </select>
+//</div>
         request.setAttribute("customerList", customerList);
         request.setAttribute("txtCustomerName", customerName); // Giữ lại giá trị txtCustomerName
         request.setAttribute("cboSex", sex); // Giữ lại giá trị cboSex
