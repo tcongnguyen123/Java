@@ -1,5 +1,79 @@
 # Java
+```
+	<div class="pagination">
+	    <c:choose>
+	        <c:when test="${currentPage > 1}">
+	            <a href="search?page=1">&laquo;</a>
+	        </c:when>
+	        <c:otherwise>
+	            <span>&laquo;</span>
+	        </c:otherwise>
+	    </c:choose>
+	
+	    <c:choose>
+	      
+	        <c:when test="${currentPage > 1}">
+	            <a href="search?page=${currentPage - 1}">&lt;</a>
+	        </c:when>
+	        <c:otherwise>
+	            <span>&lt;</span>
+	        </c:otherwise>
+	    </c:choose>
+	    <span>Page ${currentPage} of ${totalPages}</span>
+	
+	    <c:choose>
+	        <c:when test="${currentPage < totalPages}">
+	            <a href="search?page=${currentPage + 1}">&gt;</a>
+	        </c:when>
+	        <c:otherwise>
+	            <span>&gt;</span>
+	        </c:otherwise>
+	    </c:choose>
+	
+	    <c:choose>
+	        <c:when test="${currentPage < totalPages}">
+	            <a href="search?page=${totalPages}">&raquo;</a>
+	        </c:when>
+	        <c:otherwise>
+	            <span>&raquo;</span>
+	        </c:otherwise>
+	    </c:choose>
+	</div>
+```
+```
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        searchDao customerDAO = new searchDao();
 
+        // Lấy giá trị phân trang
+        String pageStr = request.getParameter("page");
+        int currentPage = (pageStr != null) ? Integer.parseInt(pageStr) : 1;
+        int recordsPerPage = 5;
+
+        try {
+            // Lấy toàn bộ danh sách khách hàng
+            List<search> customerList = customerDAO.getAllCustomers();
+
+            // Tính toán tổng số trang
+            int totalRecords = customerList.size();
+            int totalPages = (int) Math.ceil((double) totalRecords / recordsPerPage);
+
+            // Lấy dữ liệu cho trang hiện tại
+            int start = (currentPage - 1) * recordsPerPage;
+            int end = Math.min(start + recordsPerPage, totalRecords);
+            List<search> pageCustomerList = customerList.subList(start, end);
+
+            // Đưa danh sách và các thông tin phân trang vào request
+            request.setAttribute("customerList", pageCustomerList);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("currentPage", currentPage);
+            
+            // Chuyển tiếp đến trang JSP
+            request.getRequestDispatcher("/WEB-INF/jsp/search.jsp").forward(request, response);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+```
  // <div>
 //  <label for="search">Sex:</label>
 //  <select name="cboSex">
