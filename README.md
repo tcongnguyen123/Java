@@ -303,10 +303,12 @@ public class loginServlet extends HttpServlet {
 		}
 
 	}
-}```
+}
+```
 
 edit dao 
-```package dao;
+```
+package dao;
 
 import model.search;
 import java.sql.*;
@@ -339,285 +341,285 @@ public class editDao {
 
 search.jsp 
 ```
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-<style type="text/css">
-      body {
-        overflow-x: hidden;
-        font-family: Arial, sans-serif;
-        background-color: rgba(0, 255, 255, 0.336);
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      th,
-      td {
-        padding: 8px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-      }
-      th {
-        background-color: #f2f2f2;
-      }
-            tr:first-child{
-        > th{
-            background-color: rgb(0, 223, 0);
-        }
-      }
-      tr:nth-child(even) {
-        background-color: #f2f2f2;
-      }
-      tr:hover {
-        background-color: #f5f5f5;
-      }
-      .breadcrumb {
-        padding-block: 7px;
-        margin-top: 10px;
-      }
-      .welcome-user-container {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding-top: 10px;
-      }
-      .divider {
-        height: 2cap;
-        width: 100%;
-        background-color: blue;
-      }
-      .search {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        padding: 10px;
-        margin-top: 50px;
-        background-color: rgb(255, 255, 45);
-      }
-      .birthday {
-        width: 50px;
-      }
-            .pagination{
-        display: flex;
-        flex-direction: row;
-       justify-content: space-between;
-         div {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-           > p {
-            padding-inline: 10px;
-           }  
-
-       }
-      }
-</style>
-<script>
-function selectAllCheckboxes(source) {
-    var checkboxes = document.querySelectorAll('input[name="deleteIds"]');
-    for (var i = 0; i < checkboxes.length; i++) {
-        checkboxes[i].checked = source.checked;
-    }
-}
-document.getElementById("addNew").addEventListener("click", function() {
-    window.location.href = 'edit'; // Chuyển hướng đến servlet Edit
-});
-</script>
-</head>
-<body>
-	    <div class="breadcrumb"><a href="index.html">Homee</a> > {{page-name}}</div>
-<div class="welcome-user-container">
-    <p>Welcome, ${user}</p>
-    <form action="search" method="post" style="display: inline;">
-        <input type="hidden" name="action" value="logout" />
-        <button type="submit">Log Out</button>
-    </form>
-</div>
-    <div class="divider"></div>
-	<form class="search" action="search" method="post">
-	<input type="hidden" name="action" value="search" />
-	  <!-- customer name -->
-	  <div>
-	    <label for="search">Customer Name:</label>
-	    <input type="text" name="txtCustomerName" value="${txtCustomerName != null ? txtCustomerName : ''}" />
-	  </div>
-	  <!-- sex -->
-	<!-- sex -->
-	<div>
-	  <label for="search">Sex:</label>
-	  <select name="cboSex">
-	    <option value="0" ${cboSex == null || cboSex == '0' ? 'selected' : ''}></option>
-	    <option value="M" ${cboSex == 'M' ? 'selected' : ''}>Male</option>
-	    <option value="F" ${cboSex == 'F' ? 'selected' : ''}>Female</option>
-	  </select>
+	<%@ page language="java" contentType="text/html; charset=UTF-8"
+		pageEncoding="UTF-8"%>
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+	<!DOCTYPE html>
+	<html>
+	<head>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+	<style type="text/css">
+	      body {
+	        overflow-x: hidden;
+	        font-family: Arial, sans-serif;
+	        background-color: rgba(0, 255, 255, 0.336);
+	      }
+	      table {
+	        width: 100%;
+	        border-collapse: collapse;
+	      }
+	      th,
+	      td {
+	        padding: 8px;
+	        text-align: left;
+	        border-bottom: 1px solid #ddd;
+	      }
+	      th {
+	        background-color: #f2f2f2;
+	      }
+	            tr:first-child{
+	        > th{
+	            background-color: rgb(0, 223, 0);
+	        }
+	      }
+	      tr:nth-child(even) {
+	        background-color: #f2f2f2;
+	      }
+	      tr:hover {
+	        background-color: #f5f5f5;
+	      }
+	      .breadcrumb {
+	        padding-block: 7px;
+	        margin-top: 10px;
+	      }
+	      .welcome-user-container {
+	        display: flex;
+	        align-items: center;
+	        justify-content: space-between;
+	        padding-top: 10px;
+	      }
+	      .divider {
+	        height: 2cap;
+	        width: 100%;
+	        background-color: blue;
+	      }
+	      .search {
+	        display: flex;
+	        justify-content: space-around;
+	        align-items: center;
+	        padding: 10px;
+	        margin-top: 50px;
+	        background-color: rgb(255, 255, 45);
+	      }
+	      .birthday {
+	        width: 50px;
+	      }
+	            .pagination{
+	        display: flex;
+	        flex-direction: row;
+	       justify-content: space-between;
+	         div {
+	            display: flex;
+	            flex-direction: row;
+	            align-items: center;
+	           > p {
+	            padding-inline: 10px;
+	           }  
+	
+	       }
+	      }
+	</style>
+	<script>
+	function selectAllCheckboxes(source) {
+	    var checkboxes = document.querySelectorAll('input[name="deleteIds"]');
+	    for (var i = 0; i < checkboxes.length; i++) {
+	        checkboxes[i].checked = source.checked;
+	    }
+	}
+	document.getElementById("addNew").addEventListener("click", function() {
+	    window.location.href = 'edit'; // Chuyển hướng đến servlet Edit
+	});
+	</script>
+	</head>
+	<body>
+		    <div class="breadcrumb"><a href="index.html">Homee</a> > {{page-name}}</div>
+	<div class="welcome-user-container">
+	    <p>Welcome, ${user}</p>
+	    <form action="search" method="post" style="display: inline;">
+	        <input type="hidden" name="action" value="logout" />
+	        <button type="submit">Log Out</button>
+	    </form>
 	</div>
-
-	  <!-- birthday -->
-	  <div style="display: flex; justify-content: center; align-items: center;">
-	    <label for="search">Birthday:</label>
-	    <input class="birthday" type="text" name="fromBirthday" value="${fromBirthday != null ? fromBirthday : ''}" />
-	    <p>~</p>
-	    <input class="birthday" type="text" name="toBirthday" value="${toBirthday != null ? toBirthday : ''}" />
-	  </div>
-	  <button id="searchButton" type="submit" name="action" value="search">Search</button>   
-	</form>
-
-<div class="pagination">
-    <form action="search" method="post">
-        <input type="hidden" name="txtCustomerName" value="${txtCustomerName != null ? txtCustomerName : ''}" />
-        <input type="hidden" name="cboSex" value="${cboSex != null ? cboSex : ''}" />
-		<input type="hidden" name="fromBirthday" value="${fromBirthday != null ? fromBirthday : ''}" />
-		<input type="hidden" name="toBirthday" value="${toBirthday != null ? toBirthday : ''}" />
-        
-        <!-- First Page Button -->
-        <c:choose>
-            <c:when test="${currentPage > 1}">
-                <button type="submit" name="page" value="1">&laquo;</button>
-            </c:when>
-            <c:otherwise>
-                <button type="button" disabled>&laquo;</button>
-            </c:otherwise>
-        </c:choose>
-
-        <!-- Previous Page Button -->
-        <c:choose>
-            <c:when test="${currentPage > 1}">
-                <button type="submit" name="page" value="${currentPage - 1}">&lt;</button>
-            </c:when>
-            <c:otherwise>
-                <button type="button" disabled>&lt;</button>
-            </c:otherwise>
-        </c:choose>
-
-        <!-- Current Page Display -->
-        <span>Page ${currentPage} of ${totalPages}</span>
-
-        <!-- Next Page Button -->
-        <c:choose>
-            <c:when test="${currentPage < totalPages}">
-                <button type="submit" name="page" value="${currentPage + 1}">&gt;</button>
-            </c:when>
-            <c:otherwise>
-                <button type="button" disabled>&gt;</button>
-            </c:otherwise>
-        </c:choose>
-
-        <!-- Last Page Button -->
-        <c:choose>
-            <c:when test="${currentPage < totalPages}">
-                <button type="submit" name="page" value="${totalPages}">&raquo;</button>
-            </c:when>
-            <c:otherwise>
-                <button type="button" disabled>&raquo;</button>
-            </c:otherwise>
-        </c:choose>
-    </form>
-</div>
-
-<form id="delete-form" action="search" method="post">
-    <input type="hidden" name="action" value="delete" />
-
-	<table style="border: 2px solid black;">
-	  <tr>
-	    <th>
-	     <!-- select all -->
-	     <input type="checkbox" id="select-all" onclick="selectAllCheckboxes(this)">
-	    </th>
-	    <th>Customer ID</th>
-	    <th>Customer Name</th>
-	    <th>Sex</th>
-	    <th>Birthday</th>
-	    <th>Address</th>
-	  </tr>
-	  <c:forEach var="customer" items="${customerList}">
-	    <tr>
-	        <td>
-	            <input type="checkbox" name="deleteIds" value="${customer.id}">
-	        </td>
-	      <!-- Customer ID as a link -->
-	      <td><a href="edit?id=${customer.id}">${customer.id}</a></td>
-	      <td>${customer.customerName}</td>
-	      <td>
-	      	<c:choose>
-	        	<c:when test="${customer.sex == 'M'}">
-	            	Male
+	    <div class="divider"></div>
+		<form class="search" action="search" method="post">
+		<input type="hidden" name="action" value="search" />
+		  <!-- customer name -->
+		  <div>
+		    <label for="search">Customer Name:</label>
+		    <input type="text" name="txtCustomerName" value="${txtCustomerName != null ? txtCustomerName : ''}" />
+		  </div>
+		  <!-- sex -->
+		<!-- sex -->
+		<div>
+		  <label for="search">Sex:</label>
+		  <select name="cboSex">
+		    <option value="0" ${cboSex == null || cboSex == '0' ? 'selected' : ''}></option>
+		    <option value="M" ${cboSex == 'M' ? 'selected' : ''}>Male</option>
+		    <option value="F" ${cboSex == 'F' ? 'selected' : ''}>Female</option>
+		  </select>
+		</div>
+	
+		  <!-- birthday -->
+		  <div style="display: flex; justify-content: center; align-items: center;">
+		    <label for="search">Birthday:</label>
+		    <input class="birthday" type="text" name="fromBirthday" value="${fromBirthday != null ? fromBirthday : ''}" />
+		    <p>~</p>
+		    <input class="birthday" type="text" name="toBirthday" value="${toBirthday != null ? toBirthday : ''}" />
+		  </div>
+		  <button id="searchButton" type="submit" name="action" value="search">Search</button>   
+		</form>
+	
+	<div class="pagination">
+	    <form action="search" method="post">
+	        <input type="hidden" name="txtCustomerName" value="${txtCustomerName != null ? txtCustomerName : ''}" />
+	        <input type="hidden" name="cboSex" value="${cboSex != null ? cboSex : ''}" />
+			<input type="hidden" name="fromBirthday" value="${fromBirthday != null ? fromBirthday : ''}" />
+			<input type="hidden" name="toBirthday" value="${toBirthday != null ? toBirthday : ''}" />
+	        
+	        <!-- First Page Button -->
+	        <c:choose>
+	            <c:when test="${currentPage > 1}">
+	                <button type="submit" name="page" value="1">&laquo;</button>
 	            </c:when>
 	            <c:otherwise>
-	            	Female
+	                <button type="button" disabled>&laquo;</button>
 	            </c:otherwise>
-	         </c:choose>
-	      </td>
-	      <td>${customer.birthday}</td>
-	      <td>${customer.address}</td>
-	    </tr>
-	  </c:forEach>
-	</table>
-	<c:if test="${noData}">
-    <script>
-        // Disable delete button if no data is present
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById("deleteButton").disabled = true;
-        });
-    </script>
-	</c:if>
-    <div style="padding-block: 20px; display: flex; gap: 20px">
-        <button id="addNew" type="button" onclick="location.href='edit'">Add New</button>   
-        <button id="deleteButton" type="submit" name="action" value="delete">Delete</button>    
-    </div>
-</form>
-	<c:if test="${not empty errorMessage}">
-	    <div style="color: red;">${errorMessage}</div>
-	</c:if>
-</body>
-</html>
-
-edit.jsp 
-
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Customer</title>
-</head>
-<body>
-    <h1>Edit Customer</h1>
-    <form action="update" method="post">
-        <div>
-            <label for="id">Customer ID:</label>
-            <input type="text" id="id" name="id" value="${customer.id}" readonly />
-        </div>
-        <div>
-            <label for="name">Customer Name:</label>
-            <input type="text" name="name" value="${customer.customerName}" required />
-        </div>
-        <div>
-            <label for="sex">Sex:</label>
-            <select name="sex">
-                <option value="M" ${customer.sex == 'M' ? 'selected' : ''}>Male</option>
-                <option value="F" ${customer.sex == 'F' ? 'selected' : ''}>Female</option>
-            </select>
-        </div>
-        <div>
-            <label for="birthday">Birthday:</label>
-            <input type="text" name="birthday" value="${customer.birthday}" required />
-        </div>
-        <div>
-            <label for="address">Address:</label>
-            <input type="text" name="address" value="${customer.address}" required />
-        </div>
-        <button type="submit">Update</button>
-    </form>
-</body>
-</html>
+	        </c:choose>
+	
+	        <!-- Previous Page Button -->
+	        <c:choose>
+	            <c:when test="${currentPage > 1}">
+	                <button type="submit" name="page" value="${currentPage - 1}">&lt;</button>
+	            </c:when>
+	            <c:otherwise>
+	                <button type="button" disabled>&lt;</button>
+	            </c:otherwise>
+	        </c:choose>
+	
+	        <!-- Current Page Display -->
+	        <span>Page ${currentPage} of ${totalPages}</span>
+	
+	        <!-- Next Page Button -->
+	        <c:choose>
+	            <c:when test="${currentPage < totalPages}">
+	                <button type="submit" name="page" value="${currentPage + 1}">&gt;</button>
+	            </c:when>
+	            <c:otherwise>
+	                <button type="button" disabled>&gt;</button>
+	            </c:otherwise>
+	        </c:choose>
+	
+	        <!-- Last Page Button -->
+	        <c:choose>
+	            <c:when test="${currentPage < totalPages}">
+	                <button type="submit" name="page" value="${totalPages}">&raquo;</button>
+	            </c:when>
+	            <c:otherwise>
+	                <button type="button" disabled>&raquo;</button>
+	            </c:otherwise>
+	        </c:choose>
+	    </form>
+	</div>
+	
+	<form id="delete-form" action="search" method="post">
+	    <input type="hidden" name="action" value="delete" />
+	
+		<table style="border: 2px solid black;">
+		  <tr>
+		    <th>
+		     <!-- select all -->
+		     <input type="checkbox" id="select-all" onclick="selectAllCheckboxes(this)">
+		    </th>
+		    <th>Customer ID</th>
+		    <th>Customer Name</th>
+		    <th>Sex</th>
+		    <th>Birthday</th>
+		    <th>Address</th>
+		  </tr>
+		  <c:forEach var="customer" items="${customerList}">
+		    <tr>
+		        <td>
+		            <input type="checkbox" name="deleteIds" value="${customer.id}">
+		        </td>
+		      <!-- Customer ID as a link -->
+		      <td><a href="edit?id=${customer.id}">${customer.id}</a></td>
+		      <td>${customer.customerName}</td>
+		      <td>
+		      	<c:choose>
+		        	<c:when test="${customer.sex == 'M'}">
+		            	Male
+		            </c:when>
+		            <c:otherwise>
+		            	Female
+		            </c:otherwise>
+		         </c:choose>
+		      </td>
+		      <td>${customer.birthday}</td>
+		      <td>${customer.address}</td>
+		    </tr>
+		  </c:forEach>
+		</table>
+		<c:if test="${noData}">
+	    <script>
+	        // Disable delete button if no data is present
+	        document.addEventListener("DOMContentLoaded", function() {
+	            document.getElementById("deleteButton").disabled = true;
+	        });
+	    </script>
+		</c:if>
+	    <div style="padding-block: 20px; display: flex; gap: 20px">
+	        <button id="addNew" type="button" onclick="location.href='edit'">Add New</button>   
+	        <button id="deleteButton" type="submit" name="action" value="delete">Delete</button>    
+	    </div>
+	</form>
+		<c:if test="${not empty errorMessage}">
+		    <div style="color: red;">${errorMessage}</div>
+		</c:if>
+	</body>
+	</html>
+	
+	edit.jsp 
+	
+	<%@ page language="java" contentType="text/html; charset=UTF-8"
+	    pageEncoding="UTF-8"%>
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+	<!DOCTYPE html>
+	<html>
+	<head>
+	    <meta charset="UTF-8">
+	    <title>Edit Customer</title>
+	</head>
+	<body>
+	    <h1>Edit Customer</h1>
+	    <form action="update" method="post">
+	        <div>
+	            <label for="id">Customer ID:</label>
+	            <input type="text" id="id" name="id" value="${customer.id}" readonly />
+	        </div>
+	        <div>
+	            <label for="name">Customer Name:</label>
+	            <input type="text" name="name" value="${customer.customerName}" required />
+	        </div>
+	        <div>
+	            <label for="sex">Sex:</label>
+	            <select name="sex">
+	                <option value="M" ${customer.sex == 'M' ? 'selected' : ''}>Male</option>
+	                <option value="F" ${customer.sex == 'F' ? 'selected' : ''}>Female</option>
+	            </select>
+	        </div>
+	        <div>
+	            <label for="birthday">Birthday:</label>
+	            <input type="text" name="birthday" value="${customer.birthday}" required />
+	        </div>
+	        <div>
+	            <label for="address">Address:</label>
+	            <input type="text" name="address" value="${customer.address}" required />
+	        </div>
+	        <button type="submit">Update</button>
+	    </form>
+	</body>
+	</html>
 
 ```
 
