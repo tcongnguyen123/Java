@@ -1,7 +1,7 @@
 # Java
 ---------------- Day 4 ------------------------------
 search servlet 
-package servlet;
+```package servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -193,10 +193,10 @@ public class searchServlet extends HttpServlet {
         }
 
     }
-}
+}```
 
 edit servlet 
-package servlet;
+``` package servlet;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -232,11 +232,11 @@ public class editServlet extends HttpServlet {
         // Xử lý dữ liệu từ form thêm mới
         // Ví dụ: Lưu thông tin khách hàng vào cơ sở dữ liệu
     }
-}
+} ```
 
 login servlet 
 
-package servlet;
+```package servlet;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -303,10 +303,10 @@ public class loginServlet extends HttpServlet {
 		}
 
 	}
-}
+}```
 
 edit dao 
-package dao;
+```package dao;
 
 import model.search;
 import java.sql.*;
@@ -335,10 +335,10 @@ public class editDao {
         }
         return customer;
     }
-}
+}```
 
 search.jsp 
-
+```
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -619,7 +619,7 @@ edit.jsp
 </body>
 </html>
 
-
+```
 
 
 
