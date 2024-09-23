@@ -1,4 +1,302 @@
 # Java
+```
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+      body {
+        overflow-x: hidden;
+        font-family: Arial, sans-serif;
+        background-color: rgba(0, 255, 255, 0.336);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+            tr:first-child{
+        > th{
+            background-color: rgb(0, 223, 0);
+        }
+      }
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+      tr:hover {
+        background-color: #f5f5f5;
+      }
+      .breadcrumb {
+        padding-block: 7px;
+        margin-top: 10px;
+      }
+      .welcome-user-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 10px;
+      }
+      .divider {
+        height: 2cap;
+        width: 100%;
+        background-color: blue;
+      }
+      .search {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 10px;
+        margin-top: 50px;
+        background-color: rgb(255, 255, 45);
+      }
+      .birthday {
+        width: 50px;
+      }
+            .pagination{
+        display: flex;
+        flex-direction: row;
+       justify-content: space-between;
+         div {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+           > p {
+            padding-inline: 10px;
+           }  
+
+       }
+      }
+</style>
+<script>
+function selectAllCheckboxes(source) {
+    var checkboxes = document.querySelectorAll('input[name="deleteIds"]');
+    for (var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+document.getElementById("addNew").addEventListener("click", function() {
+    window.location.href = 'edit'; // Chuyển hướng đến servlet Edit
+});
+
+function isValidDate(date) {
+    // Kiểm tra định dạng YYYY/MM/DD
+    return /^\d{4}\/\d{2}\/\d{2}$/.test(date);
+}
+
+function validateForm() {
+    var birthdayFrom = document.getElementsByName('fromBirthday')[0].value;
+    var birthdayTo = document.getElementsByName('toBirthday')[0].value;
+
+    // Kiểm tra định dạng của Birthday From
+    if (birthdayFrom && !isValidDate(birthdayFrom)) {
+        alert("Birthday From is not in the correct format (YYYY/MM/DD).");
+        return false; // Ngăn không cho gửi form
+    }
+
+    // Kiểm tra định dạng của Birthday To
+    if (birthdayTo && !isValidDate(birthdayTo)) {
+        alert("Birthday To is not in the correct format (YYYY/MM/DD).");
+        return false; // Ngăn không cho gửi form
+    }
+
+    // So sánh ngày
+    if (birthdayFrom && birthdayTo && birthdayFrom > birthdayTo) {
+        alert("Birthday From must be less than Birthday To.");
+        return false; // Ngăn không cho gửi form
+    }
+
+    return true; // Nếu tất cả đúng, form sẽ được gửi
+}
+
+// Gán sự kiện validate cho form
+document.getElementsByClassName('search')[0].onsubmit = validateForm
+</script>
+</head>
+<body>
+	    <div class="breadcrumb"><a href="index.html">Homee</a> > {{page-name}}</div>
+<div class="welcome-user-container">
+    <p>Welcome, ${user}</p>
+    <form action="search" method="post" style="display: inline;">
+        <input type="hidden" name="action" value="logout" />
+        <button type="submit">Log Out</button>
+    </form>
+</div>
+    <div class="divider"></div>
+	<form class="search" action="search" method="post">
+	<input type="hidden" name="action" value="search" />
+	  <!-- customer name -->
+	  <div>
+	    <label for="search">Customer Name:</label>
+	    <input type="text" name="txtCustomerName" value="${txtCustomerName != null ? txtCustomerName : ''}" />
+	  </div>
+	  <!-- sex -->
+	<!-- sex -->
+	<div>
+	  <label for="search">Sex:</label>
+	  <select name="cboSex">
+	    <option value="0" ${cboSex == null || cboSex == '0' ? 'selected' : ''}></option>
+	    <option value="M" ${cboSex == 'M' ? 'selected' : ''}>Male</option>
+	    <option value="F" ${cboSex == 'F' ? 'selected' : ''}>Female</option>
+	  </select>
+	</div>
+
+	  <!-- birthday -->
+	  <div style="display: flex; justify-content: center; align-items: center;">
+	    <label for="search">Birthday:</label>
+	    <input class="birthday" type="text" name="fromBirthday" value="${fromBirthday != null ? fromBirthday : ''}" />
+	    <p>~</p>
+	    <input class="birthday" type="text" name="toBirthday" value="${toBirthday != null ? toBirthday : ''}" />
+	  </div>
+	  <button id="searchButton" type="submit" name="action" value="search">Search</button>   
+	</form>
+
+<div class="pagination">
+    <form action="search" method="post">
+        <input type="hidden" name="txtCustomerName" value="${txtCustomerName != null ? txtCustomerName : ''}" />
+        <input type="hidden" name="cboSex" value="${cboSex != null ? cboSex : ''}" />
+		<input type="hidden" name="fromBirthday" value="${fromBirthday != null ? fromBirthday : ''}" />
+		<input type="hidden" name="toBirthday" value="${toBirthday != null ? toBirthday : ''}" />
+        
+        <!-- First Page Button -->
+        <c:choose>
+            <c:when test="${currentPage > 1}">
+                <button type="submit" name="page" value="1">&laquo;</button>
+            </c:when>
+            <c:otherwise>
+                <button type="button" disabled>&laquo;</button>
+            </c:otherwise>
+        </c:choose>
+
+        <!-- Previous Page Button -->
+        <c:choose>
+            <c:when test="${currentPage > 1}">
+                <button type="submit" name="page" value="${currentPage - 1}">&lt;</button>
+            </c:when>
+            <c:otherwise>
+                <button type="button" disabled>&lt;</button>
+            </c:otherwise>
+        </c:choose>
+
+        <!-- Current Page Display -->
+        <span>Page ${currentPage} of ${totalPages}</span>
+
+        <!-- Next Page Button -->
+        <c:choose>
+            <c:when test="${currentPage < totalPages}">
+                <button type="submit" name="page" value="${currentPage + 1}">&gt;</button>
+            </c:when>
+            <c:otherwise>
+                <button type="button" disabled>&gt;</button>
+            </c:otherwise>
+        </c:choose>
+
+        <!-- Last Page Button -->
+        <c:choose>
+            <c:when test="${currentPage < totalPages}">
+                <button type="submit" name="page" value="${totalPages}">&raquo;</button>
+            </c:when>
+            <c:otherwise>
+                <button type="button" disabled>&raquo;</button>
+            </c:otherwise>
+        </c:choose>
+    </form>
+</div>
+
+<form id="delete-form" action="search" method="post">
+    <input type="hidden" name="action" value="delete" />
+
+	<table style="border: 2px solid black;">
+	  <tr>
+	    <th>
+	     <!-- select all -->
+	     <input type="checkbox" id="select-all" onclick="selectAllCheckboxes(this)">
+	    </th>
+	    <th>Customer ID</th>
+	    <th>Customer Name</th>
+	    <th>Sex</th>
+	    <th>Birthday</th>
+	    <th>Address</th>
+	  </tr>
+	  <c:forEach var="customer" items="${customerList}">
+	    <tr>
+	        <td>
+	            <input type="checkbox" name="deleteIds" value="${customer.id}">
+	        </td>
+	      <!-- Customer ID as a link -->
+	      <td><a href="edit?id=${customer.id}">${customer.id}</a></td>
+	      <td>${customer.customerName}</td>
+	      <td>
+	      	<c:choose>
+	        	<c:when test="${customer.sex == 'M'}">
+	            	Male
+	            </c:when>
+	            <c:otherwise>
+	            	Female
+	            </c:otherwise>
+	         </c:choose>
+	      </td>
+	      <td>${customer.birthday}</td>
+	      <td>${customer.address}</td>
+	    </tr>
+	  </c:forEach>
+	</table>
+	<c:if test="${noData}">
+    <script>
+        // Disable delete button if no data is present
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("deleteButton").disabled = true;
+        });
+    </script>
+	</c:if>
+    <div style="padding-block: 20px; display: flex; gap: 20px">
+        <button id="addNew" type="button" onclick="location.href='edit'">Add New</button>   
+        <button id="deleteButton" type="submit" name="action" value="delete">Delete</button>    
+    </div>
+</form>
+	<c:if test="${not empty errorMessage}">
+	    <div style="color: red;">${errorMessage}</div>
+	</c:if>
+</body>
+</html>
+```
+
+```
+https://github.com/tcongnguyen123/Java/blob/main/README.mdif (!validInput) {
+    // Giữ lại các giá trị nhập vào mới
+    String previousCustomerName = (String) session.getAttribute("txtCustomerName");
+    String previousSex = (String) session.getAttribute("cboSex");
+    String previousBirthdayFrom = (String) session.getAttribute("fromBirthday");
+    String previousBirthdayTo = (String) session.getAttribute("toBirthday");
+
+    // Lấy lại danh sách khách hàng từ DB theo thông tin tìm kiếm trước đó
+    List<search> customerList;
+    try {
+        customerList = customerDAO.searchCustomers(previousCustomerName, previousSex, previousBirthdayFrom, previousBirthdayTo);
+        request.setAttribute("customerList", customerList);
+        request.setAttribute("txtCustomerName", previousCustomerName); // Giữ lại tên khách hàng trước đó
+        request.setAttribute("cboSex", sex != null ? sex : previousSex); // Giữ lại giới tính mới nhập vào
+        request.setAttribute("fromBirthday", birthdayFrom); // Giữ lại ngày sinh từ
+        request.setAttribute("toBirthday", birthdayTo); // Giữ lại ngày sinh đến
+        request.getRequestDispatcher("/WEB-INF/jsp/search.jsp").forward(request, response);
+        return; // Dừng lại không thực hiện tiếp
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
+```
 ---------------- Day 4 ------------------------------
 search servlet 
 ```package servlet;
