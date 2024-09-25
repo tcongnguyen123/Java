@@ -1,4 +1,230 @@
 # Java
+```
+protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    String action = request.getParameter("action");
+
+    if ("clear".equals(action)) {
+        String customerId = request.getParameter("id"); // Lấy id khách hàng
+
+        // Tạo một đối tượng Customer mới và chỉ đặt id
+        Customer customer = new Customer();
+        customer.setId(customerId);
+        
+        // Set thuộc tính khác thành rỗng
+        customer.setCustomerName("");
+        customer.setSex("");
+        customer.setBirthday("");
+        customer.setAddress("");
+        customer.setEmail(""); // Nếu bạn có trường email
+
+        // Gửi đối tượng customer về JSP
+        request.setAttribute("customer", customer);
+        request.getRequestDispatcher("edit.jsp").forward(request, response);
+    } else if ("save".equals(action)) {
+        // Xử lý lưu thông tin
+    }
+}
+function clearForm() {
+    // Xóa nội dung của các trường input và textarea khác
+    document.getElementById('name').value = '';
+    document.getElementById('sex').value = 'M'; // Hoặc giá trị mặc định bạn muốn
+    document.getElementById('birthday').value = '';
+    document.getElementById('address').value = '';
+    document.getElementById('email').value = '';
+
+    // Ngăn không cho gửi yêu cầu về Servlet
+    // Nếu không cần gửi yêu cầu, chỉ cần xóa trường
+}
+
+```
+```
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Customer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .form-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            flex: 1;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .form-group input[type="text"], 
+        .form-group input[type="email"], 
+        .form-group select, 
+        .form-group textarea {
+            flex: 2;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .clear-button {
+            background-color: #f44336;
+        }
+
+        .clear-button:hover {
+            background-color: #e53935;
+        }
+
+        .error-message {
+            color: red;
+            text-align: center;
+        }
+
+        /* Breadcrumb and user welcome styling */
+        .breadcrumb {
+            padding: 10px 0;
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: blue;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .welcome-user-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .divider {
+            height: 2px;
+            width: 100%;
+            background-color: #ccc;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb and User Welcome Section -->
+        <div class="breadcrumb"><a href="index.html">Home</a> > Edit Customer</div>
+
+        <div class="welcome-user-container">
+            <p>Welcome, ${user}</p>
+            <form action="search" method="post" style="display: inline;">
+                <input type="hidden" name="action" value="logout" />
+                <button type="submit">Log Out</button>
+            </form>
+        </div>
+
+        <div class="divider"></div>
+
+        <form action="edit" method="post">
+            <h1>Edit Customer</h1>
+
+            <!-- Hiển thị thông báo lỗi (nếu có) -->
+            <c:if test="${not empty errorMessage}">
+                <p class="error-message">${errorMessage}</p>
+            </c:if>
+
+            <div class="form-group">
+                <label for="id">Customer ID:</label>
+                <input type="text" id="id" name="id" value="${customer.id}" readonly />
+            </div>
+
+            <div class="form-group">
+                <label for="name">Customer Name:</label>
+                <input type="text" id="name" name="name" value="${customer.customerName}" />
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="${customer.email}" />
+            </div>
+
+            <div class="form-group">
+                <label for="sex">Sex:</label>
+                <select id="sex" name="sex">
+                    <option value="M" ${customer.sex == 'M' ? 'selected' : ''}>Male</option>
+                    <option value="F" ${customer.sex == 'F' ? 'selected' : ''}>Female</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="birthday">Birthday:</label>
+                <input type="text" id="birthday" name="birthday" value="${customer.birthday}" />
+            </div>
+
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <textarea id="address" name="address" rows="3">${customer.address}</textarea>
+            </div>
+
+            <!-- Group of buttons: Save and Clear -->
+            <div class="button-group">
+                <button type="submit">Save</button>
+                <button type="reset" class="clear-button">Clear</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+
+```
 --------------------------------DAY 5------------------------------------------
 ```
 searchServlet
