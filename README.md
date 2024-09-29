@@ -1,4 +1,133 @@
 # Java
+```
+package com.example.form;
+
+import org.apache.struts.action.ActionForm;
+
+public class SearchForm extends ActionForm {
+    private String txtCustomerName;
+    private String cboSex;
+    private String fromBirthday;
+    private String toBirthday;
+
+    // Getters and setters
+    public String getTxtCustomerName() { return txtCustomerName; }
+    public void setTxtCustomerName(String txtCustomerName) { this.txtCustomerName = txtCustomerName; }
+
+    public String getCboSex() { return cboSex; }
+    public void setCboSex(String cboSex) { this.cboSex = cboSex; }
+
+    public String getFromBirthday() { return fromBirthday; }
+    public void setFromBirthday(String fromBirthday) { this.fromBirthday = fromBirthday; }
+
+    public String getToBirthday() { return toBirthday; }
+    public void setToBirthday(String toBirthday) { this.toBirthday = toBirthday; }
+}
+```
+```
+package com.example.action;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import com.example.dao.CustomerDAO;
+import java.util.List;
+
+public class SearchAction extends Action {
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse response) throws Exception {
+        SearchForm searchForm = (SearchForm) form;
+        
+        // Lấy dữ liệu từ form
+        String customerName = searchForm.getTxtCustomerName();
+        String sex = searchForm.getCboSex();
+        String fromBirthday = searchForm.getFromBirthday();
+        String toBirthday = searchForm.getToBirthday();
+
+        // Thực hiện tìm kiếm qua DAO
+        CustomerDAO customerDAO = new CustomerDAO();
+        List<Customer> customerList = customerDAO.searchCustomers(customerName, sex, fromBirthday, toBirthday);
+        
+        request.setAttribute("customerList", customerList);
+
+        return mapping.findForward("success");
+    }
+}
+
+```
+```
+<action-mappings>
+    <action path="/search"
+            type="com.example.action.SearchAction"
+            name="searchForm"
+            scope="request"
+            validate="false">
+        <forward name="success" path="/jsp/search.jsp"/>
+    </action>
+</action-mappings>
+
+<form-beans>
+    <form-bean name="searchForm" type="com.example.form.SearchForm"/>
+</form-beans>
+
+```
+```
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Search</title>
+<!-- Giữ nguyên CSS và JavaScript -->
+</head>
+<body>
+
+    <html:form action="/search" method="post">
+        <label for="search">Customer Name:</label>
+        <html:text property="txtCustomerName" /><br>
+
+        <label for="search">Sex:</label>
+        <html:select property="cboSex">
+            <html:option value="0"></html:option>
+            <html:option value="M">Male</html:option>
+            <html:option value="F">Female</html:option>
+        </html:select><br>
+
+        <label for="search">Birthday:</label>
+        <html:text property="fromBirthday" class="birthday" /> ~ 
+        <html:text property="toBirthday" class="birthday" /><br>
+
+        <input type="submit" value="Search"/>
+    </html:form>
+
+    <table>
+        <tr>
+            <th>Customer ID</th>
+            <th>Customer Name</th>
+            <th>Sex</th>
+            <th>Birthday</th>
+            <th>Address</th>
+        </tr>
+        <c:forEach var="customer" items="${customerList}">
+            <tr>
+                <td><a href="edit.do?id=${customer.id}">${customer.id}</a></td>
+                <td>${customer.customerName}</td>
+                <td>${customer.sex}</td>
+                <td>${customer.birthday}</td>
+                <td>${customer.address}</td>
+            </tr>
+        </c:forEach>
+    </table>
+
+</body>
+</html>
+
+```
 ------------------------ Struts --------------------------------------
 ```
 web.xml
