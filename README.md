@@ -1,4 +1,262 @@
 # Java
+------------------------ Struts --------------------------------------
+```
+web.xml
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+                             http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" 
+         version="2.4">
+
+    <display-name>HelloStruts1x</display-name>
+	<welcome-file-list>
+	    <welcome-file>index.jsp</welcome-file> <!-- Đặt trang login.do làm welcome file -->
+	</welcome-file-list>
+
+    <servlet>
+        <servlet-name>action</servlet-name>
+        <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>/WEB-INF/struts-config.xml</param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>action</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+</web-app>
+```
+```
+struts-config
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts-config PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 1.3//EN"
+    "dtd/struts-config_1_3.dtd">
+
+<struts-config>
+	<form-beans>
+	    <form-bean name="loginForm" type="com.example.form.LoginForm"/>
+	</form-beans>
+	
+	<action-mappings>
+	    <action path="/login"
+	            type="com.example.action.LoginAction"
+	            name="loginForm"
+	            scope="request"
+	            validate="true">
+	        <forward name="success" path="/jsp/search.jsp" redirect="true"/>
+	        <forward name="failure" path="/jsp/login.jsp"/>
+	    </action>
+	</action-mappings>
+</struts-config>
+```
+```
+login.jsp
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> 
+<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        body {
+            background-color: lightblue;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .login-form {
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            margin-right: 10px;
+        }
+
+        .form-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        input[type="submit"],
+        input[type="button"] {
+            margin-top: 10px;
+            padding: 8px 12px;
+            width: 100%;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        input[type="submit"]:hover,
+        input[type="button"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function clearForm() {
+            document.forms[0].reset();
+            var errorMessageDiv = document.getElementById("errorMessageDiv");
+            if (errorMessageDiv) {
+                errorMessageDiv.style.display = 'none'; 
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>TRAINING</h1>
+        <div class="login-form">
+            <div class="form-title">Login</div> 
+
+            <c:if test="${not empty errorMessage}">
+                <div id="errorMessageDiv" style="color: red;">${errorMessage}</div>
+            </c:if>
+
+            <html:form action="/login" method="post">
+                <label for="username">Username:</label>
+                <html:text property="username" /><br><br>
+
+                <label for="password">Password:</label>
+                <html:password property="password" /><br><br>
+
+                <input type="submit" value="Login">
+                <input type="button" value="Clear" onclick="clearForm()">
+            </html:form>
+        </div>
+    </div>
+</body>
+
+</html>
+```
+```
+loginAction
+package com.example.action;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+
+import com.example.dao.loginDao;
+import com.example.form.LoginForm;
+
+public class LoginAction extends Action {
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse response) {
+        LoginForm loginForm = (LoginForm) form;
+        String username = loginForm.getUsername();
+        String password = loginForm.getPassword();
+
+        if (username == null || username.trim().isEmpty()) {
+            request.setAttribute("errorMessage", "Chưa nhập user name");
+            return mapping.findForward("failure");
+        } 
+        if (password == null || password.trim().isEmpty()) {
+            request.setAttribute("errorMessage", "Chưa nhập password");
+            return mapping.findForward("failure");
+        } 
+        // kiem tra thong tin dang nhap
+        loginDao loginDao = new loginDao();
+        int count = loginDao.checkLogin(username, password);
+
+        if (count == 1) {
+            // Đang nhap thanh cong
+            HttpSession session = request.getSession();
+            session.setAttribute("username", username);
+            return mapping.findForward("success");
+        } else {
+            // Thông báo lỗi
+            request.setAttribute("errorMessage", "Thông tin đăng nhập sai. Vui lòng kiểm tra lại.");
+            return mapping.findForward("failure");
+        }
+    }
+}
+```
+```
+loginForm.java
+package com.example.form;
+
+import org.apache.struts.action.ActionForm;
+
+public class LoginForm extends ActionForm {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String username;
+    private String password;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}
+
+```
+```
+index
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<%-- index.jsp --%>
+<%
+    response.sendRedirect("login.do");
+%>
+</body>
+</html>
+```
+
+
+
+
 ```
 protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     String action = request.getParameter("action");
