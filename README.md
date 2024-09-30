@@ -1,5 +1,135 @@
 # Java
 ```
+editdao
+package dao;
+
+import model.search;
+import java.sql.*;
+
+import database.connectDB;
+
+public class editDao {
+    // Phương thức lấy thông tin khách hàng theo ID
+    public search getCustomerById(int id) {
+        search customer = null;
+        // Kết nối và truy vấn cơ sở dữ liệu
+        try (Connection conn = connectDB.getConnection(); 
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM mstcustomer WHERE id = ?")) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                customer = new search();
+                customer.setId(rs.getInt("id"));
+                customer.setCustomerName(rs.getString("customerName"));
+                customer.setSex(rs.getString("sex"));
+                customer.setBirthday(rs.getString("birthday"));
+                customer.setAddress(rs.getString("address"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return customer;
+    }
+    public boolean addCustomer(search customer, String username) {
+        boolean isInserted = false;
+
+        // Câu lệnh SQL để chèn dữ liệu khách hàng và lấy mã psn_cd từ bảng mstuser
+        String insertSQL = "INSERT INTO mstcustomer (customerName, sex, birthday, address, delete_ymd, insert_psn_cs) "
+                         + "SELECT ?, ?, ?, ?, ?, NULL, u.psn_cd "
+                         + "FROM mstuser u "
+                         + "WHERE u.username = ? AND u.deleteymd IS NULL";
+
+        try (Connection conn = connectDB.getConnection(); 
+             PreparedStatement stmt = conn.prepareStatement(insertSQL)) {
+
+            // Thiết lập các giá trị cho PreparedStatement
+            stmt.setString(1, customer.getCustomerName());    // customerName
+            stmt.setString(2, customer.getSex());             // sex
+            stmt.setString(3, customer.getBirthday());        // birthday
+            stmt.setString(4, customer.getAddress());         // address
+//            stmt.setString(5, customer.getEmail());           // email
+            stmt.setString(6, username);                      // username để tìm mã psn_cd
+
+            // Thực thi câu lệnh và kiểm tra kết quả
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                isInserted = true; // Nếu có ít nhất một dòng được thêm vào, đánh dấu là thành công
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return isInserted;
+    }
+//    UPDATE mstcustomer
+//    SET customerName = "Long Thanh Phe", 
+//        sex = "M", 
+//        birthday = "2002/02/10", 
+//        address = "Tay Ninh", 
+//        email = "test@gmail.com", 
+//        update_psn_cd = (SELECT u.userid FROM mstuser u WHERE u.username = "nguyen" AND u.deleteymd IS NULL LIMIT 1) 
+//    WHERE id = 4 
+    
+    
+// SELECT COUNT(*) AS cnt, userid 
+//    FROM mstuser 
+//    WHERE deleteymd IS NULL AND username = 'nguyen' AND password = '123' 
+//    GROUP BY userid;
+
+    public boolean updateCustomer(search customer, String username) {
+        boolean isUpdated = false;
+        String updateSQL = "UPDATE mstcustomer "
+                         + "SET customerName = ?, "
+                         + "sex = ?, "
+                         + "birthday = ?, "
+                         + "address = ?, "
+                         + "email = ?, "
+                         + "update_psn_cd = (SELECT u.userid FROM mstuser u WHERE u.username = ? AND u.deleteymd IS NULL LIMIT 1) "
+                         + "WHERE id = ?";
+
+        try (Connection conn = connectDB.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(updateSQL)) {
+
+            // Thiết lập các giá trị cho PreparedStatement
+            stmt.setString(1, customer.getCustomerName()); // customerName
+            stmt.setString(2, customer.getSex());           // sex
+            stmt.setString(3, customer.getBirthday());      // birthday
+            stmt.setString(4, customer.getAddress());       // address
+//            stmt.setString(5, customer.getEmail());         // email
+            stmt.setString(6, username);                     // username để lấy userid
+            stmt.setInt(7, customer.getId());               // id (khóa chính để xác định khách hàng)
+
+            // Thực thi câu lệnh và kiểm tra kết quả
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                isUpdated = true; // Nếu có ít nhất một dòng được cập nhật
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return isUpdated; // Trả về kết quả cập nhật
+    }
+
+
+
+}
+
+```
+```
+function updateSelectAll() {
+    var checkboxes = document.querySelectorAll('input[name="deleteIds"]');
+    var selectAll = document.getElementById('select-all');
+    selectAll.checked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+}
+<input type="checkbox" id="select-all" onclick="selectAllCheckboxes(this)">
+```
+
+
+
+```
 package com.example.form;
 
 import org.apache.struts.action.ActionForm;
