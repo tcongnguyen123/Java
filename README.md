@@ -1,5 +1,469 @@
 # Java
 ```
+loginjsp
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> 
+<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        body {
+            background-color: lightblue;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .login-form {
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            margin-right: 10px;
+        }
+
+        .form-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        input[type="submit"],
+        input[type="button"] {
+            margin-top: 10px;
+            padding: 8px 12px;
+            width: 100%;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        input[type="submit"]:hover,
+        input[type="button"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function clearForm() {
+            document.forms[0].reset();
+            var errorMessageDiv = document.getElementById("errorMessageDiv");
+            if (errorMessageDiv) {
+                errorMessageDiv.style.display = 'none'; 
+            }
+        }
+    </script>
+</head>
+
+<body>
+<div class="container">
+    <h1>TRAINING</h1>
+    <div class="login-form">
+        <div class="form-title">Login</div> 
+
+        <div id="errorMessageDiv" style="color: red;">
+            <html:errors />
+        </div>
+
+        <html:form action="/login" method="post">
+            <label for="username">Username:</label>
+            <html:text property="username" /><br><br>
+
+            <label for="password">Password:</label>
+            <html:password property="password" /><br><br>
+
+            <input type="submit" value="Login">
+            <input type="button" value="Clear" onclick="clearForm()">
+        </html:form>
+    </div>
+</div>
+</body>
+
+</html>
+
+```
+```
+searchjsp
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<link rel="stylesheet" type="text/css" href="<c:url value='/css/search.css' />">
+<script src="<c:url value='/js/search.js'/>"></script>
+
+</head>
+<body>
+<div class="pagination">
+    <form action="search.do" method="post">
+        <input type="hidden" name="txtCustomerName" value="${txtCustomerName != null ? txtCustomerName : ''}" />
+        <input type="hidden" name="cboSex" value="${cboSex != null ? cboSex : ''}" />
+        <input type="hidden" name="fromBirthday" value="${fromBirthday != null ? fromBirthday : ''}" />
+        <input type="hidden" name="toBirthday" value="${toBirthday != null ? toBirthday : ''}" />
+        
+        <!-- First Page Button -->
+        <c:choose>
+            <c:when test="${currentPage > 1}">
+                <button type="submit" name="page" value="1">&laquo;</button>
+            </c:when>
+            <c:otherwise>
+                <button type="button" disabled>&laquo;</button>
+            </c:otherwise>
+        </c:choose>
+
+        <!-- Previous Page Button -->
+        <c:choose>
+            <c:when test="${currentPage > 1}">
+                <button type="submit" name="page" value="${currentPage - 1}">&lt;</button>
+            </c:when>
+            <c:otherwise>
+                <button type="button" disabled>&lt;</button>
+            </c:otherwise>
+        </c:choose>
+
+        <!-- Current Page Display -->
+        <span>Page ${currentPage} of ${totalPages}</span>
+
+        <!-- Next Page Button -->
+        <c:choose>
+            <c:when test="${currentPage < totalPages}">
+                <button type="submit" name="page" value="${currentPage + 1}">&gt;</button>
+            </c:when>
+            <c:otherwise>
+                <button type="button" disabled>&gt;</button>
+            </c:otherwise>
+        </c:choose>
+
+        <!-- Last Page Button -->
+        <c:choose>
+            <c:when test="${currentPage < totalPages}">
+                <button type="submit" name="page" value="${totalPages}">&raquo;</button>
+            </c:when>
+            <c:otherwise>
+                <button type="button" disabled>&raquo;</button>
+            </c:otherwise>
+        </c:choose>
+    </form>
+</div>
+    <h1>Danh sách Khách hàng</h1>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Tên Khách hàng</th>
+            <th>Giới tính</th>
+            <th>Ngày sinh</th>
+            <th>Địa chỉ</th>
+        </tr>
+        <c:forEach var="customer" items="${customerList}">
+            <tr>
+                <td>${customer.id}</td>
+                <td>${customer.customerName}</td>
+                <td>${customer.sex}</td>
+                <td>${customer.birthday}</td>
+                <td>${customer.address}</td>
+            </tr>
+        </c:forEach>
+    </table>
+</body>
+</html>
+```
+```
+strutsconfig
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts-config PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 1.3//EN"
+    "dtd/struts-config_1_3.dtd">
+
+<struts-config>
+	<form-beans>
+	    <form-bean name="loginForm" type="com.example.form.LoginForm"/>
+	    <form-bean name="searchForm" type="com.example.form.search"/>
+	</form-beans>
+	
+	<action-mappings>
+	    <action path="/login"
+	            type="com.example.action.LoginAction"
+	            name="loginForm"
+	            scope="request"
+	            validate="true">
+	        <forward name="success" path="/search.do" redirect="true"/>
+	        <forward name="failure" path="/jsp/login.jsp"/>
+	    </action>
+	    <action path="/search"
+                type="com.example.action.searchAction"
+                name="searchForm"
+                scope="request"
+                validate="true">
+            <forward name="success" path="/jsp/searchResults.jsp"/>
+            <forward name="search" path="/jsp/search.jsp"/>
+        </action>
+	</action-mappings>
+	<message-resources parameter="message" />
+</struts-config>
+
+```
+```
+web.xml
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+                             http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" 
+         version="2.4">
+	<context-param>
+	    <param-name>javax.servlet.jsp.jstl.fmt.encoding</param-name>
+	    <param-value>UTF-8</param-value>
+	</context-param>
+
+    <display-name>HelloStruts1x</display-name>
+	<welcome-file-list>
+	    <welcome-file>index.jsp</welcome-file> <!-- Đặt trang login.do làm welcome file -->
+	</welcome-file-list>
+
+    <servlet>
+        <servlet-name>action</servlet-name>
+        <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>/WEB-INF/struts-config.xml</param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>action</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+    
+
+    
+</web-app>
+
+```
+```
+searchAction
+package com.example.action;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+
+import com.example.dao.searchDao;
+import com.example.form.search;
+
+import java.sql.SQLException;
+import java.util.List;
+
+public class searchAction extends Action {
+    @Override
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws SQLException {
+        
+        // Tạo một đối tượng DAO
+        searchDao customerDAO = new searchDao();
+        int PAGE_SIZE = 5;
+        String pageParam = request.getParameter("page");
+        int currentPage = (pageParam != null) ? Integer.parseInt(pageParam) : 1;
+
+        // Tính toán số lượng khách hàng cần lấy
+        int startRow = (currentPage - 1) * PAGE_SIZE;
+        List<search> customerList = customerDAO.getAllCustomers(); // Lấy tất cả khách hàng
+        
+        // Chia nhỏ danh sách khách hàng
+        int totalCustomers = customerList.size();
+        int totalPages = (int) Math.ceil((double) totalCustomers / PAGE_SIZE);
+
+        // Đặt danh sách khách hàng vào request
+        List<search> paginatedList = customerList.subList(
+            Math.min(startRow, totalCustomers), 
+            Math.min(startRow + PAGE_SIZE, totalCustomers)
+        );
+        
+        request.setAttribute("customerList", paginatedList);
+        request.setAttribute("currentPage", currentPage);
+        request.setAttribute("totalPages", totalPages);
+        
+        // Chuyển hướng tới trang hiển thị kết quả
+        return mapping.findForward("search");
+    }
+}
+
+```
+```
+loginAction
+package com.example.action;
+import org.apache.struts.action.ActionMessages;
+
+import com.example.dao.loginDao;
+import com.example.form.LoginForm;
+
+import java.io.UnsupportedEncodingException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+
+public class LoginAction extends Action {
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        LoginForm loginForm = (LoginForm) form;
+        String username = loginForm.getUsername();
+        String password = loginForm.getPassword();
+
+        ActionMessages errors = new ActionMessages();
+
+        if (username == null || username.trim().isEmpty()) {
+            errors.add("username", new ActionMessage("error.username.required"));
+            saveErrors(request, errors);
+            return mapping.findForward("failure");
+        } 
+        if (password == null || password.trim().isEmpty()) {
+            errors.add("password", new ActionMessage("error.password.required"));
+            saveErrors(request, errors);
+            return mapping.findForward("failure");
+        } 
+
+        loginDao loginDao = new loginDao();
+        int count = loginDao.checkLogin(username, password);
+
+        if (count == 1) {
+            HttpSession session = request.getSession();
+            session.setAttribute("username", username);
+            return mapping.findForward("success");
+        } else {
+            errors.add("login", new ActionMessage("error.login.invalid"));
+            saveErrors(request, errors);
+            return mapping.findForward("failure");
+        }
+    }
+}
+
+```
+```
+search.java
+package com.example.form;
+
+import org.apache.struts.action.ActionForm;
+
+public class search extends ActionForm {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private int id;
+    private String customerName;
+    private String sex;
+    private String birthday;
+    private String address;
+    
+    
+    // No-args constructor is required
+    public search() {
+        super();
+    }
+	public search(int id, String customerName, String sex, String birthday, String address) {
+		super();
+		this.id = id;
+		this.customerName = customerName;
+		this.sex = sex;
+		this.birthday = birthday;
+		this.address = address;
+	}
+	// Getters and Setters for form properties
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    // Optionally, override the reset method to initialize default values
+    @Override
+    public void reset(org.apache.struts.action.ActionMapping mapping, javax.servlet.http.HttpServletRequest request) {
+        // Reset fields to default values (optional)
+        this.id = 0;
+        this.customerName = null;
+        this.sex = null;
+        this.birthday = null;
+        this.address = null;
+    }
+}
+```
+
+
+
+```
 editdao
 package dao;
 
