@@ -1,5 +1,311 @@
 # Java
 ```
+package com.example.action;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
+
+import com.example.dao.searchDao;
+import com.example.form.search;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.regex.Pattern;
+
+public class searchAction extends Action {
+    private static final Pattern DATE_PATTERN = Pattern.compile("^\\d{4}/\\d{2}/\\d{2}$"); // YYYY/MM/DD format
+
+    @Override
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        HttpSession session = request.getSession();
+        String action = request.getParameter("action");
+
+        search searchForm = (search) form;
+
+        String customerName = searchForm.getCustomerName();
+        String sex = searchForm.getSex();
+        String fromBirthday = searchForm.getFromBirthday();
+        String toBirthday = searchForm.getToBirthday();
+
+        if ("logout".equals(action)) {
+            session.invalidate();
+            return mapping.findForward("login");
+        } else if ("search".equals(action)) {
+            if (fromBirthday != null && !fromBirthday.isEmpty() && !DATE_PATTERN.matcher(fromBirthday).matches()) {
+                ActionMessages errors = new ActionMessages();
+                errors.add("birthday", new ActionMessage("error.birthday.invalid"));
+                saveErrors(request, errors);
+                request.setAttribute("invalidBirthday", true);
+                return mapping.findForward("search"); // Return to the search page
+            }
+        }
+
+        searchDao customerDAO = new searchDao();
+        int PAGE_SIZE = 5;
+        String pageParam = request.getParameter("page");
+        int currentPage = (pageParam != null) ? Integer.parseInt(pageParam) : 1;
+        int startRow = (currentPage - 1) * PAGE_SIZE;
+        List<search> customerList = customerDAO.getAllCustomers();
+        int totalCustomers = customerList.size();
+        int totalPages = (int) Math.ceil((double) totalCustomers / PAGE_SIZE);
+        List<search> paginatedList = customerList.subList(
+                Math.min(startRow, totalCustomers),
+                Math.min(startRow + PAGE_SIZE, totalCustomers)
+        );
+
+        request.setAttribute("customerList", paginatedList);
+        request.setAttribute("currentPage", currentPage);
+        request.setAttribute("totalPages", totalPages);
+        return mapping.findForward("search");
+    }
+}
+
+```
+```
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<style type="text/css">
+	body {
+	    overflow-x: hidden;
+	    font-family: Arial, sans-serif;
+	    background-color: rgba(0, 255, 255, 0.336);
+	   	margin-left : 30px;
+		margin-right : 30px;
+	}
+	table {
+	    width: 100%;
+	    border-collapse: collapse;
+	}
+	th,
+	td {
+	    padding: 8px;
+	    text-align: left;
+	    border-bottom: 1px solid #ddd;
+	}
+	th {
+	    background-color: #f2f2f2;
+	}
+	tr:first-child > th {
+	    background-color: rgb(0, 223, 0);
+	}
+	tr:nth-child(even) {
+	    background-color: #f2f2f2;
+	}
+	tr:hover {
+	    background-color: #f5f5f5;
+	}
+	.breadcrumb {
+	    border-bottom : 2px solid;
+	}
+	.breadcrumb h1 {
+		color : red;
+		
+	}
+	.welcome-user-container {
+	    display: flex;
+	    align-items: center;
+	    justify-content: space-between;
+	    padding-top: 10px;
+	}
+	.container {
+		margin-left : 20px;
+		margin-right : 20px;
+	}
+	.divider {
+	    height: 40px;
+	    width: 100%;
+	    background-color: blue;
+	}
+	.search form {
+	    display: flex;
+	    justify-content: space-around;
+	    align-items: center;
+	    padding: 10px;
+	    margin-top: 50px;
+	    background-color: rgb(255, 255, 45);
+	}
+	.birthday {
+	    width: 50px;
+	}
+	.pagination {
+	    display: flex;
+	    flex-direction: row;
+	    justify-content: space-between;
+	}
+	.pagination div {
+	    display: flex;
+	    flex-direction: row;
+	    align-items: center;
+	}
+	.pagination div > p {
+	    padding-inline: 10px;
+	}
+
+</style>
+<script type="text/javascript">
+	function thongBao (){
+		alert("invalid")	
+	}
+</script>
+</head>
+<body>
+	<div class="breadcrumb">
+		<h1>Training</h1>
+    <logic:equal name="invalidBirthday" value="true">
+        <script type="text/javascript">
+            thongBao();
+        </script>
+    </logic:equal>
+	</div>
+	<div class="welcome-user-container">
+	    <p>Welcome, <bean:write name="username" scope="session" /></p>
+        <html:form action="/search" style="display: inline;">
+            <html:hidden property="action" value="logout" />
+            <a href="#" onclick="document.forms[0].submit(); return false;">Log Out</a>
+        </html:form>
+	</div>
+	<div class="divider"></div>
+	<div class = "search">
+		<html:form action="/search" method="post">
+		    <!-- Hidden field for action -->
+		    <html:hidden property="action" value="search" />
+		    
+		    <!-- Customer Name -->
+		    <div>
+		        <label for="search">Customer Name:</label>
+		        <html:text property="customerName" />
+		    </div>
+		
+		    <!-- Sex -->
+		    <div>
+		        <label for="search">Sex:</label>
+		        <html:select property="sex">
+		            <html:option value=" "></html:option>
+		            <html:option value="M">Male</html:option>
+		            <html:option value="F">Female</html:option>
+		        </html:select>
+		    </div>
+		
+		    <!-- Birthday -->
+		    <div style="display: flex; justify-content: center; align-items: center;">
+		        <label for="search">Birthday:</label>
+		        <html:text property="fromBirthday" styleClass="birthday" />
+		        <p>~</p>
+		        <html:text property="toBirthday" styleClass="birthday" />
+		    </div>
+		
+		    <!-- Submit Button -->
+		    <html:submit value="Search">Search</html:submit>
+		</html:form>
+	</div>
+
+
+	<div class="pagination">
+	    <html:form action="/search" method="post">
+	        <html:hidden property="customerName" />
+	        <html:hidden property="sex" />
+	        <html:hidden property="fromBirthday" />
+	        <html:hidden property="toBirthday" />
+	        <!-- First Page Button -->
+			<logic:present name="currentPage">
+			    <logic:greaterThan name="currentPage" value="1">
+			        <button type="submit" name="page" value="1">&laquo;</button>
+			    </logic:greaterThan>
+			    <logic:lessEqual name="currentPage" value="1">
+			        <button type="button" disabled>&laquo;</button>
+			    </logic:lessEqual>
+			</logic:present>
+	
+	        <!-- Previous Page Button -->
+	        <c:choose>
+	            <c:when test="${currentPage > 1}">
+	                <button type="submit" name="page" value="${currentPage - 1}">&lt;</button>
+	            </c:when>
+	            <c:otherwise>
+	                <button type="button" disabled>&lt;</button>
+	            </c:otherwise>
+	        </c:choose>
+	
+	        <!-- Current Page Display -->
+	        <span>Page ${currentPage} of ${totalPages}</span>
+	
+	        <!-- Next Page Button -->
+	        <c:choose>
+	            <c:when test="${currentPage < totalPages}">
+	                <button type="submit" name="page" value="${currentPage + 1}">&gt;</button>
+	            </c:when>
+	            <c:otherwise>
+	                <button type="button" disabled>&gt;</button>
+	            </c:otherwise>
+	        </c:choose>
+	
+	        <!-- Last Page Button -->
+	        <c:choose>
+	            <c:when test="${currentPage < totalPages}">
+	                <button type="submit" name="page" value="${totalPages}">&raquo;</button>
+	            </c:when>
+	            <c:otherwise>
+	                <button type="button" disabled>&raquo;</button>
+	            </c:otherwise>
+	        </c:choose>
+	    </html:form>
+	</div>
+	    <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <th>
+                    <!-- select all -->
+                <input type="checkbox" id="select-all" onclick="selectAllCheckboxes(this)">
+                </th>
+                <th>Customer ID</th>
+                <th>Customer Name</th>
+                <th>Sex</th>
+                <th>Birthday</th>
+                <th>Address</th>
+            </tr>
+            <c:forEach var="customer" items="${customerList}">
+                <tr>
+                    <td>
+                        <input type="checkbox" name="deleteIds" id = "select-all" value="${customer.id}" onclick="updateSelectAll()">
+                    </td>
+                    <td><a href="edit?id=${customer.id}">${customer.id}</a></td>
+                    <td>${customer.customerName}</td>
+                    <td>
+                        <c:choose>
+                            <c:when test="${customer.sex == 'M'}">
+                                Male
+                            </c:when>
+                            <c:otherwise>
+                                Female
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
+                    <td>${customer.birthday}</td>
+                    <td>${customer.address}</td>
+                </tr>
+            </c:forEach>
+    </table>
+</body>
+</html>
 ```
 ```
 03/10/2022
