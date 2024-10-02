@@ -1,5 +1,40 @@
 # Java
 ```
+```
+```
+03/10/2022
+<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
+<%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<c:forEach var="customer" items="${customerList}">
+    <tr>
+        <td>
+            <html:checkbox property="deleteIds" value="${customer.id}" onclick="updateSelectAll()"/>
+        </td>
+        <td>
+            <html:link action="edit?id=${customer.id}">
+                <bean:write name="customer" property="id"/>
+            </html:link>
+        </td>
+        <td><bean:write name="customer" property="customerName"/></td>
+        <td>
+            <c:choose>
+                <c:when test="${customer.sex == 'M'}">
+                    Male
+                </c:when>
+                <c:otherwise>
+                    Female
+                </c:otherwise>
+            </c:choose>
+        </td>
+        <td><bean:write name="customer" property="birthday"/></td>
+        <td><bean:write name="customer" property="address"/></td>
+    </tr>
+</c:forEach>
+
+```
+```
 loginjsp
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> 
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
