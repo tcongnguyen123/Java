@@ -1,5 +1,256 @@
 # Java
 ```
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<style type="text/css">
+	body {
+	    overflow-x: hidden;
+	    font-family: Arial, sans-serif;
+	    background-color: rgba(0, 255, 255, 0.336);
+	   	margin-left : 30px;
+		margin-right : 30px;
+	}
+	table {
+	    width: 100%;
+	    border-collapse: collapse;
+	}
+	th,
+	td {
+	    padding: 8px;
+	    text-align: left;
+	    border-bottom: 1px solid #ddd;
+	}
+	th {
+	    background-color: #f2f2f2;
+	}
+	tr:first-child > th {
+	    background-color: rgb(0, 223, 0);
+	}
+	tr:nth-child(even) {
+	    background-color: #f2f2f2;
+	}
+	tr:hover {
+	    background-color: #f5f5f5;
+	}
+	.breadcrumb {
+	    border-bottom : 2px solid;
+	}
+	.breadcrumb h1 {
+		color : red;
+		
+	}
+	.welcome-user-container {
+	    display: flex;
+	    align-items: center;
+	    justify-content: space-between;
+	    padding-top: 10px;
+	}
+	.container {
+		margin-left : 20px;
+		margin-right : 20px;
+	}
+	.divider {
+	    height: 40px;
+	    width: 100%;
+	    background-color: blue;
+	}
+	.search form {
+	    display: flex;
+	    justify-content: space-around;
+	    align-items: center;
+	    padding: 10px;
+	    margin-top: 50px;
+	    background-color: rgb(255, 255, 45);
+	}
+	.birthday {
+	    width: 50px;
+	}
+	.pagination {
+	    display: flex;
+	    flex-direction: row;
+	    justify-content: space-between;
+	}
+	.pagination div {
+	    display: flex;
+	    flex-direction: row;
+	    align-items: center;
+	}
+	.pagination div > p {
+	    padding-inline: 10px;
+	}
+
+</style>
+
+</head>
+<body>
+	<div class="breadcrumb">
+		<h1>Training</h1>
+		<html:errors/>
+		<p id="valid">${isvalid}</p>
+	</div>
+	<div class="welcome-user-container">
+	    <p>Welcome, <bean:write name="username" scope="session" /></p>
+        <html:form action="/search" style="display: inline;">
+            <html:hidden property="action" value="logout" />
+            <a href="#" onclick="document.forms[0].submit(); return false;">Log Out</a>
+        </html:form>
+	</div>
+	<div class="divider"></div>
+	<div class = "search">
+		<html:form action="/search" method="post">
+		    <!-- Hidden field for action -->
+		    <html:hidden property="action" value="search" />
+		    
+		    <!-- Customer Name -->
+		    <div>
+		        <label for="search">Customer Name:</label>
+		        <html:text property="customerName" />
+		    </div>
+		
+		    <!-- Sex -->
+		    <div>
+		        <label for="search">Sex:</label>
+		        <html:select property="sex">
+		            <html:option value=" "></html:option>
+		            <html:option value="M">Male</html:option>
+		            <html:option value="F">Female</html:option>
+		        </html:select>
+		    </div>
+		
+		    <!-- Birthday -->
+		    <div style="display: flex; justify-content: center; align-items: center;">
+		        <label for="search">Birthday:</label>
+		        <html:text property="fromBirthday" styleClass="birthday" />
+		        <p>~</p>
+		        <html:text property="toBirthday" styleClass="birthday" />
+		    </div>
+		
+		    <!-- Submit Button -->
+		    <button type="submit" value="Search">Search</button>
+		</html:form>
+	</div>
+
+
+	<div class="pagination">
+	    <html:form action="/search" method="post">
+	        <html:hidden property="customerName" />
+	        <html:hidden property="sex" />
+	        <html:hidden property="fromBirthday" />
+	        <html:hidden property="toBirthday" />
+	        <!-- First Page Button -->
+			<logic:present name="currentPage">
+			    <logic:greaterThan name="currentPage" value="1">
+			        <button type="submit" name="page" value="1">&laquo;</button>
+			    </logic:greaterThan>
+			    <logic:lessEqual name="currentPage" value="1">
+			        <button type="button" disabled>&laquo;</button>
+			    </logic:lessEqual>
+			</logic:present>
+	
+	        <!-- Previous Page Button -->
+	        <c:choose>
+	            <c:when test="${currentPage > 1}">
+	                <button type="submit" name="page" value="${currentPage - 1}">&lt;</button>
+	            </c:when>
+	            <c:otherwise>
+	                <button type="button" disabled>&lt;</button>
+	            </c:otherwise>
+	        </c:choose>
+	
+	        <!-- Current Page Display -->
+	        <span>Page ${currentPage} of ${totalPages}</span>
+	
+	        <!-- Next Page Button -->
+			<logic:present name="currentPage">
+			    <logic:lessThan name="currentPage" value="${totalPages}">
+			        <button type="submit" name="page" value="${currentPage + 1}">></button>
+			    </logic:lessThan>
+			    <logic:greaterEqual name="currentPage" value="${totalPages}">
+			        <button type="button" disabled>></button>
+			    </logic:greaterEqual>
+			</logic:present>
+			
+
+	
+	        <!-- Last Page Button -->
+			<logic:present name="currentPage">
+			    <logic:lessThan name="currentPage" value="${totalPages}">
+	                <button type="submit" name="page" value="${totalPages}">&raquo;</button>
+			    </logic:lessThan>
+			    <logic:greaterEqual name="currentPage" value="${totalPages}">
+	                <button type="button" disabled>&raquo;</button>
+			    </logic:greaterEqual>
+			</logic:present>
+	    </html:form>
+	</div>
+	    <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <th>
+                    <!-- select all -->
+                <input type="checkbox" id="select-all" onclick="selectAllCheckboxes(this)">
+                </th>
+                <th>Customer ID</th>
+                <th>Customer Name</th>
+                <th>Sex</th>
+                <th>Birthday</th>
+                <th>Address</th>
+            </tr>
+            <logic:iterate id="customer" name="customerList">
+                <tr>
+                    <td>
+                        <input type="checkbox" name="deleteIds" id = "select-all" value="${customer.id}" onclick="updateSelectAll()">
+                    </td>
+                    <td><a href="edit?id=${customer.id}">${customer.id}</a></td>
+                    <td>${customer.customerName}</td>
+                    <td>
+					<logic:equal name="customer" property="sex" value="M">
+					    Male
+					</logic:equal>
+					<logic:notEqual name="customer" property="sex" value="M">
+					    Female
+					</logic:notEqual>
+						
+                    </td>
+                    <td>${customer.birthday}</td>
+                    <td>${customer.address}</td>
+                </tr>
+            </logic:iterate>
+    </table> 
+	<script type="text/javascript">
+        function submitForm() {
+            var isValid = '<%= request.getAttribute("isvalid") %>';
+            if (isValid === "fail") {
+                var errorMessage = '<bean:message key="error.birthday.invalid" />';
+                alert(errorMessage);
+            }
+		}
+        
+    </script>
+    	<logic:messagesPresent message="true">
+		<html:messages id="error">
+			<script type="text/javascript">
+				var errorMessage = '<bean:write name="error"/>';
+				if (errorMessage) {
+					alert(errorMessage);
+				}
+			</script>
+		</html:messages>
+	</logic:messagesPresent>
+</body>
+
+</html>
+```
+```
 package com.example.action;
 
 import javax.servlet.http.HttpServletRequest;
