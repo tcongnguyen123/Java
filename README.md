@@ -1,5 +1,48 @@
 # Java
 ```
+/**
+ * 
+ */
+
+function selectAllCheckboxes(source) {
+    var checkboxes = document.querySelectorAll('input[name="deleteIds"]');
+    for (var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = source.checked;
+    }
+}
+function updateSelectAll() {
+    var checkboxes = document.querySelectorAll('input[name="deleteIds"]');
+    var selectAll = document.getElementById('select-all');
+    selectAll.checked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+}
+document.getElementById("addNew").addEventListener("click", function() {
+    window.location.href = 'edit'; // Chuyển hướng đến servlet Edit
+});
+
+function isValidDate(date) {
+    // Kiểm tra định dạng YYYY/MM/DD
+    return /^\d{4}\/\d{2}\/\d{2}$/.test(date);
+}
+
+function validateForm() {
+    var errorFlag = document.getElementById("errorFlag").value;
+    if (errorFlag === "true") {
+        alert("Có lỗi xảy ra. Vui lòng kiểm tra lại thông tin.");
+        return false; // Ngăn chặn form submit
+    }
+    return true; // Cho phép form submit nếu không có lỗi
+}
+
+window.onload = function() {
+    setTimeout(validateForm, 100); // Gọi hàm validateForm sau 100ms khi trang tải xong
+};
+<script src="<c:url value='/js/scripts.js' />"></script>
+webcontent : jsp (search.jsp ), js(scripts.js)
+```
+```
+
+```
+```
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
