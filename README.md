@@ -3,6 +3,7 @@
 /**
  * 
  */
+<html:form action="/search" method="post"> // dat vo truoc table 
 boolean selectAll = searchForm.isSelectAll();
 <html:checkbox property="selectAll" styleId="select-all" onclick="selectAllCheckboxes(this)" />
     // Getter và setter cho selectAll
