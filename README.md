@@ -3,7 +3,17 @@
 /**
  * 
  */
+boolean selectAll = searchForm.isSelectAll();
+<html:checkbox property="selectAll" styleId="select-all" onclick="selectAllCheckboxes(this)" />
+    // Getter và setter cho selectAll
+    public boolean isSelectAll() {
+        return selectAll;
+    }
 
+    public void setSelectAll(boolean selectAll) {
+        this.selectAll = selectAll;
+    }
+private boolean selectAll; 
 function selectAllCheckboxes(source) {
     var checkboxes = document.querySelectorAll('input[name="deleteIds"]');
     for (var i = 0; i < checkboxes.length; i++) {
