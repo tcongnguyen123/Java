@@ -1,5 +1,44 @@
 # Java
 ```
+		<html:messages id="message" property="deleteError">
+    		<input type="hidden" id="errorMessage" value="<bean:write name='message' />" />
+		</html:messages>
+function showErrorMessage(message) {
+    alert(message);
+}
+
+window.onload = function() {
+    const errorMessage = document.getElementById("errorMessage");
+    if (errorMessage && errorMessage.value) {
+        setTimeout(function() {
+            showErrorMessage(errorMessage.value);
+        }, 1000);
+    }
+
+    validateForm(); // Gọi validateForm ngay sau khi trang tải xong
+}
+        if ("delete".equals(action)) {
+            String[] deleteIds = req.getParameterValues("deleteIds");
+            
+            // Validate if any checkbox was selected
+            if (deleteIds == null || deleteIds.length == 0) {
+                errors = new ActionMessages();
+                errors.add("deleteError", new ActionMessage("error.delete.noselection"));
+                saveErrors(req, errors);
+                return mapping.findForward("search");
+            }
+
+            // Proceed with the delete logic if rows are selected
+            searchDao customerDAO = new searchDao();
+            for (String id : deleteIds) {
+                customerDAO.deleteCustomerById(id);
+            }
+
+            // After deletion, refresh the list and pagination
+            return execute(mapping, form, req, resp); // Re-run the search action to refresh the customer list
+        }
+```
+```
 /**
  * 
  */
