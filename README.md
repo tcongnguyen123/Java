@@ -1,5 +1,121 @@
 # Java
 ```
+1. Thêm Thư Viện Cần Thiết
+Bạn cần thêm các thư viện của Spring và Hibernate vào dự án của mình. Tải các JAR cần thiết từ trang chính thức hoặc từ Maven Repository và thêm chúng vào thư mục WEB-INF/lib của dự án.
+
+Thư viện cần thiết:
+
+Spring Framework: spring-core, spring-web, spring-webmvc, spring-context
+Hibernate: hibernate-core, hibernate-entitymanager, hibernate-validator
+MySQL Connector: mysql-connector-java (để kết nối với MySQL)
+```
+```
+Tạo một file cấu hình Spring, ví dụ applicationContext.xml, trong thư mục WEB-INF. Nội dung file có thể giống như sau:
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- DataSource configuration -->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost:3306/your_database_name" />
+        <property name="username" value="your_username" />
+        <property name="password" value="your_password" />
+    </bean>
+
+    <!-- Hibernate SessionFactory configuration -->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="fjs.cs.dto" />
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- HibernateTemplate configuration -->
+    <bean id="hibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+</beans>
+
+```
+```
+Nếu bạn chưa có, tạo một file hibernate.cfg.xml trong src/main/resources với nội dung tương tự:
+<!DOCTYPE hibernate-configuration PUBLIC 
+    "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</property>
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/your_database_name</property>
+        <property name="hibernate.connection.username">your_username</property>
+        <property name="hibernate.connection.password">your_password</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <mapping class="fjs.cs.dto.CustomerDto" />
+    </session-factory>
+</hibernate-configuration>
+
+```
+```
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate5.HibernateTemplate;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public class CustomerDao {
+
+    @Autowired
+    private HibernateTemplate hibernateTemplate;
+
+    public void saveCustomer(CustomerDto customer) {
+        hibernateTemplate.save(customer);
+    }
+
+    public List<CustomerDto> getAllCustomers() {
+        return hibernateTemplate.loadAll(CustomerDto.class);
+    }
+}
+<servlet>
+    <servlet-name>spring</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+</servlet>
+<servlet-mapping>
+    <servlet-name>spring</servlet-name>
+    <url-pattern>/spring/*</url-pattern>
+</servlet-mapping>
+import org.springframework.beans.factory.annotation.Autowired;
+
+public class LoginAction extends Action {
+
+    @Autowired
+    private CustomerDao customerDao;
+
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest req, HttpServletResponse resp) {
+        // Sử dụng customerDao để thực hiện truy vấn
+        List<CustomerDto> customers = customerDao.getAllCustomers();
+        // Thực hiện logic khác
+        return mapping.findForward("success");
+    }
+}
+public ActionForward execute(ActionMapping mapping, ActionForm form,
+                             HttpServletRequest req, HttpServletResponse resp) {
+    ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(req.getServletContext());
+    customerDao = context.getBean(CustomerDao.class);
+    // Thực hiện logic
+}
+
+```
+```
 		<html:messages id="message" property="deleteError">
     		<input type="hidden" id="errorMessage" value="<bean:write name='message' />" />
 		</html:messages>
